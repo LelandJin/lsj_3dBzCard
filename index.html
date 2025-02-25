@@ -12,18 +12,53 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: transparent;
+            background-color: #f5e8d3; /* Light coffee-like background */
             font-family: Arial, sans-serif;
-            overflow: hidden; /* Prevents scrolling on small screens */
+            overflow: hidden;
+            position: relative; /* For layering */
+        }
+
+        /* Coffee bean rain animation */
+        .coffee-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allows clicks to pass through to card */
+            z-index: 1; /* Behind the card */
+        }
+
+        .coffee-bean {
+            position: absolute;
+            width: 10px;
+            height: 20px;
+            background-color: #5c4033; /* Coffee bean brown */
+            border-radius: 50%; /* Oval shape */
+            opacity: 0.8;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0.2;
+            }
         }
 
         .card-container {
             perspective: 1000px;
-            width: 90vw; /* Scales to 90% of viewport width */
-            max-width: 350px; /* Caps at desktop size */
-            height: 51.43vw; /* Maintains 3.5:2 ratio (200/350 = 0.5714) */
+            width: 90vw;
+            max-width: 350px;
+            height: 51.43vw;
             max-height: 200px;
-            margin: 0 auto; /* Ensures centering */
+            margin: 0 auto;
+            position: relative;
+            z-index: 2; /* Above the coffee rain */
         }
 
         .card {
@@ -31,14 +66,18 @@
             height: 100%;
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.6s ease; /* Smoother transition */
+            transition: transform 0.6s ease;
             cursor: pointer;
-            -webkit-user-select: none; /* Prevents text selection on tap */
+            -webkit-user-select: none;
             user-select: none;
-            -webkit-tap-highlight-color: transparent; /* Removes tap highlight on mobile */
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .card.flipped {
+        .card.flip-left {
+            transform: rotateY(-180deg);
+        }
+
+        .card.flip-right {
             transform: rotateY(180deg);
         }
 
@@ -65,19 +104,19 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block; /* Removes any inline spacing */
+            display: block;
         }
 
-        /* Media query for very small screens */
         @media (max-width: 400px) {
             .card-container {
                 width: 85vw;
-                height: 48.57vw; /* Adjusted ratio for smaller screens */
+                height: 48.57vw;
             }
         }
     </style>
 </head>
 <body>
+    <div class="coffee-rain" id="coffeeRain"></div>
     <div class="card-container">
         <div class="card">
             <div class="front">
@@ -89,16 +128,49 @@
         </div>
     </div>
     <script>
+        // Coffee bean rain generator
+        const coffeeRain = document.getElementById('coffeeRain');
+        function createCoffeeBean() {
+            const bean = document.createElement('div');
+            bean.className = 'coffee-bean';
+            bean.style.left = Math.random() * 100 + 'vw'; // Random horizontal position
+            bean.style.animationDuration = Math.random() * 3 + 2 + 's'; // 2-5s fall speed
+            coffeeRain.appendChild(bean);
+            setTimeout(() => bean.remove(), 5000); // Remove after 5s (longer than max fall time)
+        }
+
+        // Generate beans every 200ms
+        setInterval(createCoffeeBean, 200);
+
+        // Card flip logic
         const card = document.querySelector('.card');
-        card.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevents double-tap zoom on mobile
-            card.classList.toggle('flipped');
-        });
-        // Optional: Add touch event for extra responsiveness
-        card.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // Prevents default touch behavior
-            card.classList.toggle('flipped');
-        }, { passive: false });
+        let isFlipped = false;
+
+        function handleFlip(event) {
+            event.preventDefault();
+            const rect = card.getBoundingClientRect();
+            const clickX = event.type === 'touchstart' ? event.touches[0].clientX : event.clientX;
+            const cardCenter = rect.left + rect.width / 2;
+
+            if (!isFlipped) {
+                if (clickX < cardCenter) {
+                    card.classList.remove('flip-right');
+                    card.classList.add('flip-left');
+                } else {
+                    card.classList.remove('flip-left');
+                    card.classList.add('flip-right');
+                }
+                isFlipped = true;
+            } else {
+                if (clickX < cardCenter || clickX >= cardCenter) {
+                    card.classList.remove('flip-left', 'flip-right');
+                }
+                isFlipped = false;
+            }
+        }
+
+        card.addEventListener('click', handleFlip);
+        card.addEventListener('touchstart', handleFlip, { passive: false });
     </script>
 </body>
 </html>
