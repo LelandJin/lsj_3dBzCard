@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centered 3D Business Card with Images</title>
+    <style>
+        html, body {
+            height: 100vh; /* Full viewport height */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center; /* Horizontal centering */
+            align-items: center; /* Vertical centering */
+            background-color: transparent; /* Keeps it embed-friendly */
+            font-family: Arial, sans-serif;
+        }
+
+        .card-container {
+            perspective: 1000px;
+            width: 350px; /* Fixed width for business card ratio */
+            height: 200px; /* Fixed height for 3.5:2 ratio */
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: rotateY(180deg);
+        }
+
+        .front, .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            overflow: hidden; /* Keeps image within bounds */
+        }
+
+        .front {
+            background-color: #ffffff; /* Fallback if image fails */
+        }
+
+        .back {
+            background-color: #4a90e2; /* Fallback if image fails */
+            transform: rotateY(180deg);
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures image fills space without distortion */
+        }
+    </style>
+</head>
+<body>
+    <div class="card-container">
+        <div class="card">
+            <div class="front">
+                <img src="https://img.picgo.net/2025/02/25/241740497990_.picbb47db952b8dc437.png" alt="Front Side">
+            </div>
+            <div class="back">
+                <img src="https://img.picgo.net/2025/02/25/Screenshot-2025-02-25-at-11.57.09PM08d48f9c7508d99e.png" alt="Back Side">
+            </div>
+        </div>
+    </div>
+    <script>
+        // Optional: Toggle flip on click instead of hover
+        const card = document.querySelector('.card');
+        card.addEventListener('click', () => {
+            card.classList.toggle('flipped');
+        });
+    </script>
+</body>
+</html>
