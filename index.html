@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centered 3D Business Card with Images</title>
+    <title>李慎菊</title>
     <style>
         html, body {
             height: 100vh; /* Full viewport height */
@@ -31,8 +31,9 @@
             cursor: pointer;
         }
 
-        .card:hover {
-            transform: rotateY(180deg);
+        /* Removed .card:hover to disable hover flip */
+        .card.flipped {
+            transform: rotateY(180deg); /* Flip when class is added */
         }
 
         .front, .back {
@@ -73,10 +74,9 @@
         </div>
     </div>
     <script>
-        // Optional: Toggle flip on click instead of hover
         const card = document.querySelector('.card');
         card.addEventListener('click', () => {
-            card.classList.toggle('flipped');
+            card.classList.toggle('flipped'); // Toggles the flipped class on each click
         });
     </script>
 </body>
