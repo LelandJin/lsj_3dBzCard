@@ -2,24 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>李慎菊</title>
     <style>
         html, body {
-            height: 100vh; /* Full viewport height */
+            height: 100vh;
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: center; /* Horizontal centering */
-            align-items: center; /* Vertical centering */
-            background-color: transparent; /* Keeps it embed-friendly */
+            justify-content: center;
+            align-items: center;
+            background-color: transparent;
             font-family: Arial, sans-serif;
+            overflow: hidden; /* Prevents scrolling on small screens */
         }
 
         .card-container {
             perspective: 1000px;
-            width: 350px; /* Fixed width for business card ratio */
-            height: 200px; /* Fixed height for 3.5:2 ratio */
+            width: 90vw; /* Scales to 90% of viewport width */
+            max-width: 350px; /* Caps at desktop size */
+            height: 51.43vw; /* Maintains 3.5:2 ratio (200/350 = 0.5714) */
+            max-height: 200px;
+            margin: 0 auto; /* Ensures centering */
         }
 
         .card {
@@ -27,13 +31,15 @@
             height: 100%;
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.6s;
+            transition: transform 0.6s ease; /* Smoother transition */
             cursor: pointer;
+            -webkit-user-select: none; /* Prevents text selection on tap */
+            user-select: none;
+            -webkit-tap-highlight-color: transparent; /* Removes tap highlight on mobile */
         }
 
-        /* Removed .card:hover to disable hover flip */
         .card.flipped {
-            transform: rotateY(180deg); /* Flip when class is added */
+            transform: rotateY(180deg);
         }
 
         .front, .back {
@@ -43,22 +49,31 @@
             backface-visibility: hidden;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            overflow: hidden; /* Keeps image within bounds */
+            overflow: hidden;
         }
 
         .front {
-            background-color: #ffffff; /* Fallback if image fails */
+            background-color: #ffffff;
         }
 
         .back {
-            background-color: #4a90e2; /* Fallback if image fails */
+            background-color: #4a90e2;
             transform: rotateY(180deg);
         }
 
         img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Ensures image fills space without distortion */
+            object-fit: cover;
+            display: block; /* Removes any inline spacing */
+        }
+
+        /* Media query for very small screens */
+        @media (max-width: 400px) {
+            .card-container {
+                width: 85vw;
+                height: 48.57vw; /* Adjusted ratio for smaller screens */
+            }
         }
     </style>
 </head>
@@ -75,9 +90,15 @@
     </div>
     <script>
         const card = document.querySelector('.card');
-        card.addEventListener('click', () => {
-            card.classList.toggle('flipped'); // Toggles the flipped class on each click
+        card.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevents double-tap zoom on mobile
+            card.classList.toggle('flipped');
         });
+        // Optional: Add touch event for extra responsiveness
+        card.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevents default touch behavior
+            card.classList.toggle('flipped');
+        }, { passive: false });
     </script>
 </body>
 </html>
